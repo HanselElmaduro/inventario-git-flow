@@ -4,6 +4,10 @@ const STORAGE_KEY = "inventario-productos-v1";
 const form = document.querySelector("#product-form");
 const tableBody = document.querySelector("#products");
 const currency = new Intl.NumberFormat("es-DO", { style: "currency", currency: "DOP" });
+const formTitle = document.querySelector("#form-title");
+const submitButton = document.querySelector("#save-product");
+const cancelEdit = document.querySelector("#cancel-edit");
+let editingCode = null;
 const notice = document.querySelector("#notice");
 
 let products;
@@ -40,7 +44,7 @@ function renderProducts() {
   tableBody.replaceChildren();
   if (!products?.length) {
     const cell = tableBody.insertRow().insertCell();
-    cell.colSpan = 5;
+    cell.colSpan = 6;
     cell.className = "empty";
     cell.textContent = products === null ? "Inventario no disponible." : "Todavía no hay productos.";
     return;
@@ -50,6 +54,60 @@ function renderProducts() {
     for (const value of [product.code, product.name, product.category, product.quantity, currency.format(product.price)]) {
       row.insertCell().textContent = value;
     }
+    const actions = row.insertCell();
+    actions.append(productAction("Editar", "secondary", product, () => editProduct(product)));
+  }
+}
+
+function productAction(label, style, product, onClick) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = style;
+  button.textContent = label;
+  button.setAttribute("aria-label", label + " " + product.name);
+  button.addEventListener("click", onClick);
+  return button;
+}
+
+function editProduct(product) {
+  editingCode = product.code;
+  for (const [name, value] of Object.entries(product)) {
+    form.elements.namedItem(name).value = value;
+  }
+  formTitle.textContent = "Editar producto";
+  submitButton.textContent = "Guardar cambios";
+  cancelEdit.hidden = false;
+  showNotice("");
+  form.elements.namedItem("code").focus();
+}
+
+function resetForm() {
+  editingCode = null;
+  form.reset();
+  formTitle.textContent = "Registrar producto";
+  submitButton.textContent = "Guardar producto";
+  cancelEdit.hidden = true;
+}
+
+cancelEdit.addEventListener("click", () => {
+  resetForm();
+  showNotice("");
+  form.elements.namedItem("code").focus();
+});
+
+function storeProduct(product) {
+  if (products.some((item) => item.code === product.code && item.code !== editingCode)) {
+    showNotice("Ya existe un producto con ese código.", true);
+    return;
+  }
+  const isEditing = editingCode !== null;
+  const updatedProducts = isEditing
+    ? products.map((item) => item.code === editingCode ? product : item)
+    : [...products, product];
+  if (saveProducts(updatedProducts)) {
+    resetForm();
+    renderProducts();
+    showNotice(isEditing ? "Producto actualizado." : "Producto registrado.");
   }
 }
 
@@ -76,15 +134,7 @@ form.addEventListener("submit", (event) => {
     showNotice("Completa el código, el nombre y la categoría.", true);
     return;
   }
-  if (products.some((item) => item.code === product.code)) {
-    showNotice("Ya existe un producto con ese código.", true);
-    return;
-  }
-  if (saveProducts([...products, product])) {
-    form.reset();
-    renderProducts();
-    showNotice("Producto registrado.");
-  }
+  storeProduct(product);
 });
 
 renderProducts();
