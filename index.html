@@ -40,6 +40,23 @@
       </form>
       <p id="notice" class="notice" role="status"></p>
     </section>
+    <section class="panel" aria-labelledby="inventory-title">
+      <h2 id="inventory-title">Productos</h2>
+      <div class="table-wrap" tabindex="0" role="region" aria-label="Tabla de inventario">
+        <table aria-labelledby="inventory-title">
+          <thead>
+            <tr>
+              <th scope="col">Código</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Categoría</th>
+              <th scope="col">Cantidad</th>
+              <th scope="col">Precio</th>
+            </tr>
+          </thead>
+          <tbody id="products"></tbody>
+        </table>
+      </div>
+    </section>
   </main>
   <script src="app.js" defer></script>
 </body>
