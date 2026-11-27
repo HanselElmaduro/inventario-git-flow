@@ -55,7 +55,13 @@ function renderProducts() {
       row.insertCell().textContent = value;
     }
     const actions = row.insertCell();
-    actions.append(productAction("Editar", "secondary", product, () => editProduct(product)));
+    const buttons = document.createElement("div");
+    buttons.className = "actions";
+    buttons.append(
+      productAction("Editar", "secondary", product, () => editProduct(product)),
+      productAction("Eliminar", "danger", product, () => deleteProduct(product))
+    );
+    actions.append(buttons);
   }
 }
 
@@ -79,6 +85,17 @@ function editProduct(product) {
   cancelEdit.hidden = false;
   showNotice("");
   form.elements.namedItem("code").focus();
+}
+
+function deleteProduct(product) {
+  if (!window.confirm(`¿Eliminar «${product.name}» del inventario?`)) return;
+  const updatedProducts = products.filter((item) => item.code !== product.code);
+  if (saveProducts(updatedProducts)) {
+    if (editingCode === product.code) resetForm();
+    renderProducts();
+    document.querySelector(".table-wrap").focus();
+    showNotice("Producto eliminado.");
+  }
 }
 
 function resetForm() {
