@@ -2,6 +2,8 @@
 
 const STORAGE_KEY = "inventario-productos-v1";
 const form = document.querySelector("#product-form");
+const tableBody = document.querySelector("#products");
+const currency = new Intl.NumberFormat("es-DO", { style: "currency", currency: "DOP" });
 const notice = document.querySelector("#notice");
 
 let products;
@@ -34,6 +36,23 @@ function saveProducts(updatedProducts) {
   return true;
 }
 
+function renderProducts() {
+  tableBody.replaceChildren();
+  if (!products?.length) {
+    const cell = tableBody.insertRow().insertCell();
+    cell.colSpan = 5;
+    cell.className = "empty";
+    cell.textContent = products === null ? "Inventario no disponible." : "Todavía no hay productos.";
+    return;
+  }
+  for (const product of products) {
+    const row = tableBody.insertRow();
+    for (const value of [product.code, product.name, product.category, product.quantity, currency.format(product.price)]) {
+      row.insertCell().textContent = value;
+    }
+  }
+}
+
 function readProduct() {
   const fields = new FormData(form);
   const code = fields.get("code").trim().toUpperCase();
@@ -63,6 +82,9 @@ form.addEventListener("submit", (event) => {
   }
   if (saveProducts([...products, product])) {
     form.reset();
+    renderProducts();
     showNotice("Producto registrado.");
   }
 });
+
+renderProducts();
