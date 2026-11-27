@@ -35,7 +35,8 @@
           </label>
         </div>
         <div class="actions">
-          <button type="submit">Guardar producto</button>
+          <button type="submit" id="save-product">Guardar producto</button>
+          <button type="button" id="cancel-edit" class="secondary" hidden>Cancelar edición</button>
         </div>
       </form>
       <p id="notice" class="notice" role="status"></p>
@@ -51,6 +52,7 @@
               <th scope="col">Categoría</th>
               <th scope="col">Cantidad</th>
               <th scope="col">Precio</th>
+              <th scope="col">Acciones</th>
             </tr>
           </thead>
           <tbody id="products"></tbody>
