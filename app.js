@@ -2,6 +2,9 @@
 
 const STORAGE_KEY = "inventario-productos-v1";
 const form = document.querySelector("#product-form");
+const search = document.querySelector("#search");
+const summary = document.querySelector("#summary");
+const number = new Intl.NumberFormat("es-DO");
 const tableBody = document.querySelector("#products");
 const currency = new Intl.NumberFormat("es-DO", { style: "currency", currency: "DOP" });
 const formTitle = document.querySelector("#form-title");
@@ -40,16 +43,30 @@ function saveProducts(updatedProducts) {
   return true;
 }
 
+function normalizeText(value) {
+  return value.toLocaleLowerCase("es").normalize("NFD").replace(/\p{M}/gu, "");
+}
+
 function renderProducts() {
+  const keyword = normalizeText(search.value.trim());
+  const visibleProducts = (products ?? []).filter(({ code, name, category }) =>
+    [code, name, category].some((value) => normalizeText(value).includes(keyword))
+  );
+  const units = visibleProducts.reduce((total, product) => total + product.quantity, 0);
+  summary.textContent = products === null ? "" :
+    `${number.format(visibleProducts.length)} de ${number.format(products.length)} productos · ${number.format(units)} unidades`;
   tableBody.replaceChildren();
-  if (!products?.length) {
+  if (!visibleProducts.length) {
     const cell = tableBody.insertRow().insertCell();
     cell.colSpan = 6;
     cell.className = "empty";
-    cell.textContent = products === null ? "Inventario no disponible." : "Todavía no hay productos.";
+    cell.textContent = "Inventario no disponible.";
+    if (products !== null) {
+      cell.textContent = products.length ? "No hay productos que coincidan." : "Todavía no hay productos.";
+    }
     return;
   }
-  for (const product of products) {
+  for (const product of visibleProducts) {
     const row = tableBody.insertRow();
     for (const value of [product.code, product.name, product.category, product.quantity, currency.format(product.price)]) {
       row.insertCell().textContent = value;
@@ -154,4 +171,5 @@ form.addEventListener("submit", (event) => {
   storeProduct(product);
 });
 
+search.addEventListener("input", renderProducts);
 renderProducts();
