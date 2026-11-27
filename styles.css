@@ -1,0 +1,44 @@
+:root {
+  color-scheme: light;
+  font-family: system-ui, sans-serif;
+  color: #102b2b;
+  background: #edf3f0;
+  --green: #075d4c;
+  --muted: #435e58;
+  --line: #c4d3cd;
+}
+* { box-sizing: border-box; }
+body { margin: 0; }
+.container { width: min(1120px, calc(100% - 32px)); margin-inline: auto; }
+.masthead { background: #103d36; color: #fff; padding-block: 36px; }
+.eyebrow { margin: 0 0 6px; color: #aee4cc; font-size: .86rem; font-weight: 700; }
+h1 { margin: 0; font-size: clamp(1.75rem, 4vw, 2.7rem); line-height: 1.1; }
+h2 { font-size: 1.18rem; margin: 0 0 18px; }
+main { display: grid; gap: 18px; padding-block: 24px 44px; }
+.panel { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 22px; min-width: 0; }
+label { display: grid; gap: 6px; font-size: .9rem; font-weight: 650; }
+input, button { font: inherit; min-height: 42px; border-radius: 7px; padding: 8px 11px; }
+input { width: 100%; border: 1px solid #829891; color: inherit; background: #fff; }
+button { cursor: pointer; font-weight: 650; border: 1px solid var(--green); color: #fff; background: var(--green); }
+button.secondary { color: var(--green); background: #fff; }
+button.danger { color: #a32434; background: #fff; border-color: #a32434; }
+button:hover { filter: brightness(.93); }
+:focus-visible { outline: 3px solid #287f6e; outline-offset: 3px; }
+.fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 13px; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+form .actions { margin-top: 16px; }
+.notice { color: var(--green); margin: 10px 0 0; }
+.notice:empty { display: none; }
+.notice.error { color: #a32434; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; text-align: left; }
+th, td { padding: 11px 9px; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+th { background: #f1f7f4; font-size: .86rem; }
+.empty { color: var(--muted); text-align: center; padding: 24px 8px; }
+.toolbar { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 14px; margin-bottom: 14px; }
+.toolbar label { flex: 1 1 220px; max-width: 380px; }
+.summary { margin: 0; color: var(--muted); }
+[hidden] { display: none !important; }
+@media (max-width: 540px) {
+  .panel { padding: 15px; }
+}
